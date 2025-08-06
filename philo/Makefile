@@ -10,7 +10,7 @@ BONUS		= philo_bonus
 # **************************************************************************** #
 
 CC			= cc
-CFLAGS		= -Wall -Wextra -Werror
+CFLAGS		= -Wall -Wextra
 RM			= rm -rf
 MAKE		= make --no-print-directory
 LOGO_BUILT	= 0
@@ -52,6 +52,8 @@ BUILD_DIR	= .build/
 # **************************************************************************** #
 
 FILES		+= main
+FILES		+= dead
+FILES		+= init
 
 SRC				= $(addsuffix .c, $(FILES))
 OBJS			= $(addprefix $(BUILD_DIR), $(addsuffix .o, $(FILES)))

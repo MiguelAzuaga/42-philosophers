@@ -1,31 +1,7 @@
 #include "../includes/philo.h"
 #include <sys/time.h>
 
-void	erro_msg(int error)
-{
-	if (error == MALLOC)
-		write(2, "Malloc error\n", 13);
-	else if (error == USAGE)
-		write(2, "Usage:./philo <number_of_philosophers> <time_to_die> <time_\
-to_eat> <time_to_sleep> [number_of_times_each_philosopher_must_eat]\n", 127);
-	else if (error == INVALID_ARGS)
-		write(2, "Invalid arguments\n", 18);
-	else if (error == MUTEX)
-		write(2, "Mutex error\n", 12);
-	return ;
-}
-
-void	ft_error(int error, t_data *data)
-{
-	if (error == 0)
-		return ;
-	if (data)
-		free(data);
-	erro_msg(error);
-	exit(EXIT_FAILURE);
-}
-
-long	get_current_time_ms(void)
+long	ft_get_time(void)
 {
 	struct timeval	tv;
 
@@ -58,23 +34,6 @@ int	ft_atoi(const char *str)
 	return (sign * ans);
 }
 
-int	init_args(char **argv, t_data *data)
-{
-	data->qty_philo = ft_atoi(argv[1]);
-	data->t_die = ft_atoi(argv[2]);
-	data->t_eat = ft_atoi(argv[3]);
-	data->t_sleep = ft_atoi(argv[4]);
-	data->qty_eat = -1;
-	data->start_time = get_current_time_ms();
-	if (argv[5])
-		data->qty_eat = ft_atoi(argv[5]);
-	if (data->qty_philo == 0 || data->qty_eat == 0)
-		return (INVALID_ARGS);
-	if (pthread_mutex_init(&data->mutex, NULL) != 0)
-		return (MUTEX);
-	return (0);
-}
-
 int	parse_args(int argc, char **argv)
 {
 	int	i;
@@ -99,10 +58,14 @@ int	parse_args(int argc, char **argv)
 
 int	main(int argc, char **argv)
 {
-	t_data	data;
-	t_philo	*philo;
+	t_table			data;
+	t_philo			*philo;
 
-	ft_error(parse_args(argc, argv), NULL);
-	ft_error(init_args, NULL);
+	data = (t_table){0};
+	philo = NULL;
+	ft_error(parse_args(argc, argv), NULL, NULL);
+	ft_error(ft_init(argv, &data, &philo), &data, philo);
+	
+	ft_error(-1, &data, philo);
 	return (0);
 }

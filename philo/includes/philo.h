@@ -1,34 +1,45 @@
 #ifndef PHILO_H
 # define PHILO_H
 
+# include <stdio.h>
 # include <unistd.h>
 # include <stdlib.h>
-# include <stdio.h>
 # include <pthread.h>
+# include <sys/time.h>
 
 # define MALLOC 42
 # define MUTEX 43
 # define USAGE 1
 # define INVALID_ARGS 2
 
-typedef struct s_data
+typedef struct s_table
 {
 	int				qty_philo;
-	int				t_die;
-	int				t_eat;
-	int				t_sleep;
+	int				time_die;
+	int				time_eat;
+	int				time_sleep;
 	int				qty_eat;
 	long			start_time;
-	pthread_mutex_t	mutex;
-}	t_data;
+	pthread_mutex_t *forks;
+	pthread_mutex_t	write;
+}	t_table;
 
 typedef struct s_philo
 {
 	int				id;
 	long			last_eat;
+	suseconds_t		qty_eat;
 	pthread_mutex_t	*l_fork;
 	pthread_mutex_t	*r_fork;
-	t_data			data;
+	pthread_t		thread;
+	t_table			*table;
 }	t_philo;
+
+void	ft_error(int err, t_table *table, t_philo *philo);
+void	free_forks(t_table *table, int count);
+
+int	ft_init(char **argv, t_table *table, t_philo **philo);
+int		ft_atoi(const char *str);
+long	ft_get_time(void);
 
 #endif

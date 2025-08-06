@@ -1,0 +1,48 @@
+#include "philo.h"
+
+void	erro_msg(int error)
+{
+	if (error == MALLOC)
+		write(2, "Malloc error\n", 13);
+	else if (error == USAGE)
+		write(2, "Usage:./philo <number_of_philosophers> <time_to_die> <time_\
+to_eat> <time_to_sleep> [number_of_times_each_philosopher_must_eat]\n", 127);
+	else if (error == INVALID_ARGS)
+		write(2, "Invalid arguments\n", 18);
+	else if (error == MUTEX)
+		write(2, "Mutex error\n", 12);
+	return ;
+}
+
+void	free_forks(t_table *table, int count)
+{
+	int	i;
+
+	i = 0;
+	while (i < count)
+	{
+		pthread_mutex_destroy(&table->forks[i]);
+		i++;
+	}
+	free(table->forks);
+	table->forks = NULL;
+	return ;
+}
+
+void	ft_error(int err, t_table *table, t_philo *philo)
+
+{
+	if (err != 0)
+	{
+		if (table)
+			pthread_mutex_destroy(&table->write);
+		if (table && table->forks)
+			free_forks(table, table->qty_philo);
+		if (philo)
+			free(philo);
+	}
+	if (err <= 0)
+		return ;
+	erro_msg(err);
+	exit(EXIT_FAILURE);
+}
