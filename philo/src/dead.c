@@ -11,6 +11,8 @@ to_eat> <time_to_sleep> [number_of_times_each_philosopher_must_eat]\n", 127);
 		write(2, "Invalid arguments\n", 18);
 	else if (error == MUTEX)
 		write(2, "Mutex error\n", 12);
+	else if (error == THREAD)
+		write(2, "Thread error\n", 13);
 	return ;
 }
 

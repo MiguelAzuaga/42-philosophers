@@ -43,9 +43,9 @@ int	init_forks(t_table *table)
 int	init_args(char **argv, t_table *table)
 {
 	table->qty_philo = ft_atoi(argv[1]);
-	table->time_die = ft_atoi(argv[2]);
-	table->time_eat = ft_atoi(argv[3]);
-	table->time_sleep = ft_atoi(argv[4]);
+	table->time_die = ft_atoi(argv[2]) * 1000;
+	table->time_eat = ft_atoi(argv[3]) * 1000;
+	table->time_sleep = ft_atoi(argv[4]) * 1000;
 	table->qty_eat = -1;
 	table->start_time = ft_get_time();
 	if (argv[5])

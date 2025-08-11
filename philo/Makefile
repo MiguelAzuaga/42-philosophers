@@ -42,7 +42,7 @@ C_LOGO		= 38;5;217m
 #                                 Directories                                  #
 # **************************************************************************** #
 
-VPATH		= src
+VPATH		= src src/utils
 
 INCLUDE_DIR	= includes/
 BUILD_DIR	= .build/
@@ -53,10 +53,14 @@ BUILD_DIR	= .build/
 
 FILES		+= main
 FILES		+= dead
-FILES		+= init
+FILES		+= run
+FILES		+= loop
 
-SRC				= $(addsuffix .c, $(FILES))
-OBJS			= $(addprefix $(BUILD_DIR), $(addsuffix .o, $(FILES)))
+UTILS		+= init
+UTILS		+= utils
+
+SRC				= $(addsuffix .c, $(FILES)) $(addsuffix .c, $(UTILS))
+OBJS			= $(SRC:%.c=$(BUILD_DIR)%.o)
 
 INCLUDE	= -I$(INCLUDE_DIR)
 
@@ -114,7 +118,7 @@ re: fclean
 	fi
 
 #$(BONUS): $(BONUS_OBJS)
-#	@$(CC) $(CFLAGS) $^ $(MLX_FLAGS) -o $@
+#	@$(CC) $(CFLAGS) -o $@
 #	@$(eval LOGO_BUILT := 1)
 #	@printf "$(ESC)$(B)$(C_GREEN)✔ Created binary: $(ESC)$(RST)$@\n"
 

@@ -11,6 +11,14 @@
 # define MUTEX 43
 # define USAGE 1
 # define INVALID_ARGS 2
+# define THREAD 3
+
+# define FORK "has taken the fork\n"
+# define EAT "is eating\n"
+# define SLEEP "is sleeping\n"
+# define THINK "is thinking\n"
+# define DEATH "died\n"
+# define DEFORK "has released the fork\n"
 
 typedef struct s_table
 {
@@ -38,8 +46,12 @@ typedef struct s_philo
 void	ft_error(int err, t_table *table, t_philo *philo);
 void	free_forks(t_table *table, int count);
 
-int	ft_init(char **argv, t_table *table, t_philo **philo);
+int		ft_init(char **argv, t_table *table, t_philo **philo);
 int		ft_atoi(const char *str);
 long	ft_get_time(void);
+
+int		ft_run(t_table *table, t_philo *philo);
+void	*ft_loop(void *_philo);
+
 
 #endif
