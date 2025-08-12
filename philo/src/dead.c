@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   dead.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: mqueiros <mqueiros@student.42porto.com>    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/08/12 05:20:03 by mqueiros          #+#    #+#             */
+/*   Updated: 2025/08/12 06:47:49 by mqueiros         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "philo.h"
 
 void	erro_msg(int error)
@@ -37,7 +49,10 @@ void	ft_error(int err, t_table *table, t_philo *philo)
 	if (err != 0)
 	{
 		if (table)
+		{
 			pthread_mutex_destroy(&table->write);
+			pthread_mutex_destroy(&table->finish);
+		}
 		if (table && table->forks)
 			free_forks(table, table->qty_philo);
 		if (philo)
