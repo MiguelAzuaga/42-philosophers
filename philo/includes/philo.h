@@ -6,7 +6,7 @@
 /*   By: mqueiros <mqueiros@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/12 05:20:22 by mqueiros          #+#    #+#             */
-/*   Updated: 2025/08/14 06:21:33 by mqueiros         ###   ########.fr       */
+/*   Updated: 2025/08/14 09:55:31 by mqueiros         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@
 # define INVALID_ARGS 2
 # define THREAD 3
 
-# define DEATH "\033[91mdied\033[0m\n"
+# define DEAD "\033[91mdied\033[0m\n"
 # define THINK "is thinking\n"
 # define EAT "\033[92mis eating\033[0m\n"
 # define SLEEP "is sleeping\n"
@@ -42,8 +42,10 @@ typedef struct s_table
 	int				qty_eat;
 	long			start_time;
 	int				philo_finished;
+	int				total_eat;
 	pthread_mutex_t	*forks;
 	pthread_mutex_t	write;
+	pthread_mutex_t	lock_state;
 }	t_table;
 
 typedef struct s_philo

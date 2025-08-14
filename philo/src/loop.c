@@ -6,22 +6,11 @@
 /*   By: mqueiros <mqueiros@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/12 05:20:07 by mqueiros          #+#    #+#             */
-/*   Updated: 2025/08/14 06:44:52 by mqueiros         ###   ########.fr       */
+/*   Updated: 2025/08/14 10:03:13 by mqueiros         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
-
-void	write_action(t_philo *philo, char *action)
-{
-	long	timestamp;
-
-	pthread_mutex_lock(&philo->table->write);
-	timestamp = ft_get_time() - philo->table->start_time;
-	if (!philo->table->end_sim)
-		printf("%-5ld %2d %s", timestamp, philo->id, action);
-	pthread_mutex_unlock(&philo->table->write);
-}
 
 void	put_forks(t_philo *philo)
 {
@@ -58,7 +47,10 @@ void	take_forks(t_philo *philo)
 void	eats(t_philo *philo)
 {
 	take_forks(philo);
+	pthread_mutex_lock(&philo->table->lock_state);
 	philo->last_eat = ft_get_time();
+	philo->table->total_eat++;
+	pthread_mutex_unlock(&philo->table->lock_state);
 	write_action(philo, EAT);
 	usleep(philo->table->time_eat);
 	put_forks(philo);
@@ -67,13 +59,24 @@ void	eats(t_philo *philo)
 		philo->qty_eat++;
 		if (philo->qty_eat == philo->table->qty_eat)
 		{
-			pthread_mutex_lock(&philo->table->write);
+			pthread_mutex_lock(&philo->table->lock_state);
 			philo->table->philo_finished++;
 			if (philo->table->philo_finished == philo->table->qty_philo)
-				philo->table->end_sim = 1;
-			pthread_mutex_unlock(&philo->table->write);
+				philo->table->end_sim = 3;
+			pthread_mutex_unlock(&philo->table->lock_state);
 		}
 	}
+}
+
+static int	should_stop(t_philo *philo)
+{
+	int	stop;
+
+	pthread_mutex_lock(&philo->table->lock_state);
+	stop = philo->table->end_sim || (philo->table->qty_eat > 0
+			&& philo->qty_eat >= philo->table->qty_eat);
+	pthread_mutex_unlock(&philo->table->lock_state);
+	return (stop);
 }
 
 void	*ft_loop(void *_philo)
@@ -81,14 +84,10 @@ void	*ft_loop(void *_philo)
 	t_philo	*philo;
 
 	philo = (t_philo *)_philo;
-	while (!is_dead(philo) && !philo->table->end_sim)
+	while (!is_dead(philo) && !should_stop(philo))
 	{
-		if (philo->table->qty_eat > 0
-			&& philo->qty_eat >= philo->table->qty_eat)
-			break ;
 		eats(philo);
-		if (philo->table->end_sim || (philo->table->qty_eat > 0
-				&& philo->qty_eat >= philo->table->qty_eat))
+		if (should_stop(philo))
 			break ;
 		write_action(philo, SLEEP);
 		usleep(philo->table->time_sleep);
