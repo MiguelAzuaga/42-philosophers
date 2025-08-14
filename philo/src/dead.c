@@ -6,7 +6,7 @@
 /*   By: mqueiros <mqueiros@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/12 05:20:03 by mqueiros          #+#    #+#             */
-/*   Updated: 2025/08/14 07:46:43 by mqueiros         ###   ########.fr       */
+/*   Updated: 2025/08/14 15:46:21 by mqueiros         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,9 +43,9 @@ void	free_forks(t_table *table, int count)
 	return ;
 }
 
-void	ft_error(int err, t_table *table, t_philo *philo)
+int	ft_error(int err, t_table *table, t_philo *philo)
 {
-	if (err != 0)
+	if (err != 0 && err != -42)
 	{
 		if (table)
 		{
@@ -58,7 +58,7 @@ void	ft_error(int err, t_table *table, t_philo *philo)
 			free(philo);
 	}
 	if (err <= 0)
-		return ;
+		return (0);
 	erro_msg(err);
-	exit(EXIT_FAILURE);
+	return (1);
 }

@@ -6,7 +6,7 @@
 /*   By: mqueiros <mqueiros@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/12 05:20:00 by mqueiros          #+#    #+#             */
-/*   Updated: 2025/08/14 07:40:47 by mqueiros         ###   ########.fr       */
+/*   Updated: 2025/08/14 15:46:04 by mqueiros         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ int	init_philo(t_table *table, t_philo **philo)
 
 	*philo = malloc(table->qty_philo * sizeof(t_philo));
 	if (!*philo)
-		ft_error(MALLOC, table, NULL);
+		return (MALLOC);
 	i = 0;
 	while (i < table->qty_philo)
 	{
@@ -39,7 +39,7 @@ int	init_forks(t_table *table)
 
 	table->forks = malloc(table->qty_philo * sizeof(pthread_mutex_t));
 	if (!table->forks)
-		ft_error(MALLOC, table, NULL);
+		return (MALLOC);
 	i = 0;
 	while (i < table->qty_philo)
 	{
@@ -79,8 +79,11 @@ int	init_args(char **argv, t_table *table)
 
 int	ft_init(char **argv, t_table *table, t_philo **philo)
 {
-	ft_error(init_args(argv, table), table, NULL);
-	ft_error(init_forks(table), table, NULL);
-	ft_error(init_philo(table, philo), table, *philo);
+	if (ft_error(init_args(argv, table), table, NULL))
+		return (-42);
+	if (ft_error(init_forks(table), table, NULL))
+		return (-42);
+	if (ft_error(init_philo(table, philo), table, *philo))
+		return (-42);
 	return (0);
 }

@@ -6,7 +6,7 @@
 /*   By: mqueiros <mqueiros@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/12 05:20:10 by mqueiros          #+#    #+#             */
-/*   Updated: 2025/08/14 10:43:57 by mqueiros         ###   ########.fr       */
+/*   Updated: 2025/08/14 15:40:07 by mqueiros         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,9 +42,12 @@ int	main(int argc, char **argv)
 
 	table = (t_table){0};
 	philo = NULL;
-	ft_error(parse_args(argc, argv), NULL, NULL);
-	ft_error(ft_init(argv, &table, &philo), &table, philo);
-	ft_error(ft_run(&table, philo), &table, philo);
+	if (ft_error(parse_args(argc, argv), NULL, NULL))
+		return (1);
+	if (ft_error(ft_init(argv, &table, &philo), &table, philo))
+		return (1);
+	if (ft_error(ft_run(&table, philo), &table, philo))
+		return (1);
 	if (table.qty_eat > 0
 		&& table.total_eat != (table.qty_philo * table.qty_eat))
 		color = "\033[91m";

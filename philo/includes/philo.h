@@ -6,7 +6,7 @@
 /*   By: mqueiros <mqueiros@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/12 05:20:22 by mqueiros          #+#    #+#             */
-/*   Updated: 2025/08/14 09:55:31 by mqueiros         ###   ########.fr       */
+/*   Updated: 2025/08/14 15:45:49 by mqueiros         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,7 @@ typedef struct s_philo
 	t_table			*table;
 }	t_philo;
 
-void	ft_error(int err, t_table *table, t_philo *philo);
+int		ft_error(int err, t_table *table, t_philo *philo);
 void	free_forks(t_table *table, int count);
 int		is_dead(t_philo *philo);
 
