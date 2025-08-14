@@ -10,7 +10,7 @@ BONUS		= philo_bonus
 # **************************************************************************** #
 
 CC			= cc
-CFLAGS		= -Wall -Wextra
+CFLAGS		= -Wall -Wextra -Werror
 RM			= rm -rf
 MAKE		= make --no-print-directory
 LOGO_BUILT	= 0
