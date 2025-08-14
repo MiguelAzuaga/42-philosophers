@@ -6,7 +6,7 @@
 /*   By: mqueiros <mqueiros@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/12 05:20:07 by mqueiros          #+#    #+#             */
-/*   Updated: 2025/08/12 06:58:55 by mqueiros         ###   ########.fr       */
+/*   Updated: 2025/08/14 06:44:52 by mqueiros         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ void	write_action(t_philo *philo, char *action)
 	pthread_mutex_lock(&philo->table->write);
 	timestamp = ft_get_time() - philo->table->start_time;
 	if (!philo->table->end_sim)
-		printf("%ld %d %s", timestamp, philo->id, action);
+		printf("%-5ld %2d %s", timestamp, philo->id, action);
 	pthread_mutex_unlock(&philo->table->write);
 }
 
@@ -67,29 +67,31 @@ void	eats(t_philo *philo)
 		philo->qty_eat++;
 		if (philo->qty_eat == philo->table->qty_eat)
 		{
-			pthread_mutex_lock(&philo->table->finish);
+			pthread_mutex_lock(&philo->table->write);
 			philo->table->philo_finished++;
 			if (philo->table->philo_finished == philo->table->qty_philo)
 				philo->table->end_sim = 1;
-			pthread_mutex_unlock(&philo->table->finish);
+			pthread_mutex_unlock(&philo->table->write);
 		}
 	}
 }
 
-void	*ft_loop(void *philos)
+void	*ft_loop(void *_philo)
 {
 	t_philo	*philo;
 
-	philo = (t_philo *)philos;
+	philo = (t_philo *)_philo;
 	while (!is_dead(philo) && !philo->table->end_sim)
 	{
-		if (!philo->table->end_sim)
-			eats(philo);
-		if (!philo->table->end_sim)
-		{
-			write_action(philo, SLEEP);
-			usleep(philo->table->time_sleep);
-		}
+		if (philo->table->qty_eat > 0
+			&& philo->qty_eat >= philo->table->qty_eat)
+			break ;
+		eats(philo);
+		if (philo->table->end_sim || (philo->table->qty_eat > 0
+				&& philo->qty_eat >= philo->table->qty_eat))
+			break ;
+		write_action(philo, SLEEP);
+		usleep(philo->table->time_sleep);
 		write_action(philo, THINK);
 	}
 	return (NULL);

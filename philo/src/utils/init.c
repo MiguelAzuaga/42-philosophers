@@ -6,7 +6,7 @@
 /*   By: mqueiros <mqueiros@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/12 05:20:00 by mqueiros          #+#    #+#             */
-/*   Updated: 2025/08/12 06:54:47 by mqueiros         ###   ########.fr       */
+/*   Updated: 2025/08/14 06:20:33 by mqueiros         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,8 +71,6 @@ int	init_args(char **argv, t_table *table)
 			return (INVALID_ARGS);
 	}
 	if (pthread_mutex_init(&table->write, NULL) != 0)
-		return (MUTEX);
-	if (pthread_mutex_init(&table->finish, NULL) != 0)
 		return (MUTEX);
 	return (0);
 }

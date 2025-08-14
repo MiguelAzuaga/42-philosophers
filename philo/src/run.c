@@ -6,7 +6,7 @@
 /*   By: mqueiros <mqueiros@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/12 05:20:14 by mqueiros          #+#    #+#             */
-/*   Updated: 2025/08/12 06:20:45 by mqueiros         ###   ########.fr       */
+/*   Updated: 2025/08/14 06:45:23 by mqueiros         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,8 +18,10 @@ int	is_dead(t_philo *philo)
 	{
 		philo->table->end_sim = 1;
 		pthread_mutex_lock(&philo->table->write);
-		printf("%ld %d %s", ft_get_time() - philo->table->start_time,
-			philo->id, DEATH);
+		if (philo->table->end_sim == 1)
+			printf("%-5ld %2d %s", ft_get_time() - philo->table->start_time,
+				philo->id, DEATH);
+		philo->table->end_sim++;
 		pthread_mutex_unlock(&philo->table->write);
 		return (1);
 	}
