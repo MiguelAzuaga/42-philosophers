@@ -13,6 +13,7 @@ CC			= cc
 CFLAGS		= -Wall -Wextra -Werror
 RM			= rm -rf
 MAKE		= make --no-print-directory
+VAL_RUN		= ./philo 5 800 200 200 7
 LOGO_BUILT	= 0
 BONUS_BUILT	= 0
 
@@ -46,6 +47,7 @@ VPATH		= src src/utils
 
 INCLUDE_DIR	= includes/
 BUILD_DIR	= .build/
+VAL_OUT		= log
 
 # **************************************************************************** #
 #                                    Files                                     #
@@ -97,6 +99,7 @@ fclean: clean
 		$(RM) "$(BONUS)"; \
 		printf "\n$(ESC)$(B)$(C_RED)✔ Removed binaries$(ESC)$(RST)\n\n"; \
 	fi
+	@$(RM) "$(VAL_OUT)";
 
 re: fclean
 	@if [ -f $(BONUS) ]; then \
@@ -106,6 +109,30 @@ re: fclean
 	@printf "$(ESC)$(B)$(C_YELLOW)✔ Rebuilding regular build$(ESC)$(RST)\n"
 	@$(MAKE) all
 
+valgrind:
+	@if [ ! -f "$(NAME)" ]; then \
+		$(MAKE) all; \
+	fi
+	@if [ -f "$(VAL_OUT)" ]; then \
+		rm -f $(VAL_OUT); \
+	fi
+	@echo "$(ESC)$(B)$(C_YELLOW)Running Valgrind tools with input $(VAL_RUN)$(ESC)$(RST)"
+	@echo	"=============================================" >> $(VAL_OUT)
+	@echo	" Running Basic Valgrind:" >> $(VAL_OUT)
+	@echo	"=============================================" >> $(VAL_OUT)
+	@valgrind --leak-check=full --show-leak-kinds=all $(VAL_RUN) 1>> /dev/null 2>> $(VAL_OUT)
+	@echo	"$(ESC)$(B)$(C_YELLOW)Finished basic Valgrind$(ESC)$(RST)"
+	@echo	"=============================================" >> $(VAL_OUT)
+	@echo	" Running Helgrind Tool of Valgrind:" >> $(VAL_OUT)
+	@echo	"=============================================" >> $(VAL_OUT)
+	@valgrind --tool=helgrind $(VAL_RUN) 1>> /dev/null 2>> $(VAL_OUT)
+	@echo "$(ESC)$(B)$(C_YELLOW)Finished Helgrind$(ESC)$(RST)"
+	@echo	"=============================================" >> $(VAL_OUT)
+	@echo	" Running DRD Tool of Valgrind:" >> $(VAL_OUT)
+	@echo	"=============================================" >> $(VAL_OUT)
+	@valgrind --tool=drd $(VAL_RUN) 1>> /dev/null 2>> $(VAL_OUT)
+	@echo	"$(ESC)$(B)$(C_YELLOW)Finished DRD$(ESC)$(RST)"
+	@echo "${BLUE}Valgrind ran on project, output saved to $(VAL_OUT)$(ESC)$(RST)"
 # **************************************************************************** #
 #                                     Bonus                                    #
 # **************************************************************************** #
