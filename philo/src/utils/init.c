@@ -6,7 +6,7 @@
 /*   By: mqueiros <mqueiros@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/12 05:20:00 by mqueiros          #+#    #+#             */
-/*   Updated: 2025/08/14 15:46:04 by mqueiros         ###   ########.fr       */
+/*   Updated: 2025/08/15 15:56:35 by mqueiros         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,8 +57,8 @@ int	init_args(char **argv, t_table *table)
 {
 	table->qty_philo = ft_atoi(argv[1]);
 	table->time_die = ft_atoi(argv[2]);
-	table->time_eat = ft_atoi(argv[3]) * 1000;
-	table->time_sleep = ft_atoi(argv[4]) * 1000;
+	table->time_eat = ft_atoi(argv[3]);
+	table->time_sleep = ft_atoi(argv[4]);
 	table->qty_eat = -1;
 	table->start_time = ft_get_time();
 	if (table->qty_philo <= 0 || table->time_die <= 0
@@ -80,10 +80,10 @@ int	init_args(char **argv, t_table *table)
 int	ft_init(char **argv, t_table *table, t_philo **philo)
 {
 	if (ft_error(init_args(argv, table), table, NULL))
-		return (-42);
+		return (404);
 	if (ft_error(init_forks(table), table, NULL))
-		return (-42);
+		return (404);
 	if (ft_error(init_philo(table, philo), table, *philo))
-		return (-42);
+		return (404);
 	return (0);
 }

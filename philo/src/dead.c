@@ -6,7 +6,7 @@
 /*   By: mqueiros <mqueiros@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/12 05:20:03 by mqueiros          #+#    #+#             */
-/*   Updated: 2025/08/14 15:46:21 by mqueiros         ###   ########.fr       */
+/*   Updated: 2025/08/15 14:47:05 by mqueiros         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,12 +45,15 @@ void	free_forks(t_table *table, int count)
 
 int	ft_error(int err, t_table *table, t_philo *philo)
 {
-	if (err != 0 && err != -42)
+	if (err != 0 && err != 404)
 	{
 		if (table)
 		{
-			pthread_mutex_destroy(&table->write);
-			pthread_mutex_destroy(&table->lock_state);
+			if (err > INVALID_ARGS)
+			{
+				pthread_mutex_destroy(&table->write);
+				pthread_mutex_destroy(&table->lock_state);
+			}
 			if (table && table->forks)
 				free_forks(table, table->qty_philo);
 		}

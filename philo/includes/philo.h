@@ -6,7 +6,7 @@
 /*   By: mqueiros <mqueiros@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/12 05:20:22 by mqueiros          #+#    #+#             */
-/*   Updated: 2025/08/14 15:45:49 by mqueiros         ###   ########.fr       */
+/*   Updated: 2025/08/15 15:48:59 by mqueiros         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,9 +36,9 @@ typedef struct s_table
 {
 	int				end_sim;
 	int				qty_philo;
-	int				time_die;
-	int				time_eat;
-	int				time_sleep;
+	long			time_die;
+	long			time_eat;
+	long			time_sleep;
 	int				qty_eat;
 	long			start_time;
 	int				philo_finished;
@@ -61,7 +61,7 @@ typedef struct s_philo
 
 int		ft_error(int err, t_table *table, t_philo *philo);
 void	free_forks(t_table *table, int count);
-int		is_dead(t_philo *philo);
+int		is_dead(t_philo *philo, long action);
 
 int		ft_init(char **argv, t_table *table, t_philo **philo);
 int		ft_atoi(const char *str);

@@ -6,7 +6,7 @@
 /*   By: mqueiros <mqueiros@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/12 05:20:14 by mqueiros          #+#    #+#             */
-/*   Updated: 2025/08/14 15:34:42 by mqueiros         ###   ########.fr       */
+/*   Updated: 2025/08/15 16:20:05 by mqueiros         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ void	write_action(t_philo *philo, char *action)
 	pthread_mutex_unlock(&philo->table->write);
 }
 
-int	is_dead(t_philo *philo)
+int	is_dead(t_philo *philo, long action)
 {
 	int		dead;
 	long	cur;
@@ -31,14 +31,20 @@ int	is_dead(t_philo *philo)
 	dead = 0;
 	cur = ft_get_time();
 	pthread_mutex_lock(&philo->table->lock_state);
+	if (philo->last_eat + philo->table->time_die < cur + action && !philo->table->end_sim)
+	{
+		usleep(((philo->last_eat + philo->table->time_die) - cur) * 1000);
+		dead = 1;
+	}
 	if (cur - philo->last_eat >= philo->table->time_die
 		&& !philo->table->end_sim)
 	{
-		philo->table->end_sim = 1;
-		pthread_mutex_lock(&philo->table->write);
-		printf("%-5ld %3d %s", cur - philo->table->start_time, philo->id, DEAD);
-		pthread_mutex_unlock(&philo->table->write);
 		dead = 1;
+	}
+	if (dead)
+	{
+		write_action(philo, DEAD);
+		philo->table->end_sim = 1;
 	}
 	pthread_mutex_unlock(&philo->table->lock_state);
 	return (dead);

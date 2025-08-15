@@ -6,7 +6,7 @@
 /*   By: mqueiros <mqueiros@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/12 05:20:07 by mqueiros          #+#    #+#             */
-/*   Updated: 2025/08/14 10:03:13 by mqueiros         ###   ########.fr       */
+/*   Updated: 2025/08/15 16:11:13 by mqueiros         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,7 @@ void	eats(t_philo *philo)
 	philo->table->total_eat++;
 	pthread_mutex_unlock(&philo->table->lock_state);
 	write_action(philo, EAT);
-	usleep(philo->table->time_eat);
+	usleep(philo->table->time_eat * 1000);
 	put_forks(philo);
 	if (philo->table->qty_eat > 0)
 	{
@@ -84,13 +84,13 @@ void	*ft_loop(void *_philo)
 	t_philo	*philo;
 
 	philo = (t_philo *)_philo;
-	while (!is_dead(philo) && !should_stop(philo))
+	while (!is_dead(philo, philo->table->time_eat) && !should_stop(philo))
 	{
 		eats(philo);
-		if (should_stop(philo))
+		if (is_dead(philo, philo->table->time_sleep) || should_stop(philo))
 			break ;
 		write_action(philo, SLEEP);
-		usleep(philo->table->time_sleep);
+		usleep(philo->table->time_sleep * 1000);
 		write_action(philo, THINK);
 	}
 	return (NULL);
