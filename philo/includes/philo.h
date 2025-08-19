@@ -6,7 +6,7 @@
 /*   By: mqueiros <mqueiros@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/12 05:20:22 by mqueiros          #+#    #+#             */
-/*   Updated: 2025/08/15 16:32:35 by mqueiros         ###   ########.fr       */
+/*   Updated: 2025/08/19 18:05:55 by mqueiros         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,8 +29,10 @@
 # define DEAD "\033[91mdied\033[0m\n"
 # define THINK "is thinking\n"
 # define EAT "\033[92mis eating\033[0m\n"
+# define FEAT "\033[94mfinished eating\033[0m\n"
 # define SLEEP "is sleeping\n"
 # define FORK "has taken a fork\n"
+# define DEFORK "\033[93mhas let go of a fork\033[0m\n"
 
 typedef struct s_table
 {
@@ -42,7 +44,6 @@ typedef struct s_table
 	int				qty_eat;
 	long			start_time;
 	int				philo_finished;
-	int				total_eat;
 	pthread_mutex_t	*forks;
 	pthread_mutex_t	write;
 	pthread_mutex_t	lock_state;

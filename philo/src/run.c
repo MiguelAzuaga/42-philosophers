@@ -6,7 +6,7 @@
 /*   By: mqueiros <mqueiros@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/12 05:20:14 by mqueiros          #+#    #+#             */
-/*   Updated: 2025/08/15 16:32:19 by mqueiros         ###   ########.fr       */
+/*   Updated: 2025/08/19 17:57:32 by mqueiros         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,6 +63,36 @@ int	is_dead(t_philo *philo)
 	return (dead);
 }
 
+void monitor_loop(t_table *table, t_philo *philo)
+{
+	int	i;
+	int	count;
+
+	while (!table->end_sim)
+	{
+		count = 0;
+		i = 0;
+		while (i < table->qty_philo)
+		{
+			pthread_mutex_lock(&table->lock_state);
+			if (ft_get_time() - (philo[i].last_eat) > table->time_die)
+			{
+				write_action(&philo[i], DEAD);
+				table->end_sim = 1;
+			}
+			if (philo[i].qty_eat > table->qty_eat)
+			{
+				count++;
+				if (count == table->qty_philo)
+					table->end_sim = 1;
+			}
+			pthread_mutex_unlock(&table->lock_state);
+			i++;
+		}
+		usleep(1000); // avoid busy loop
+	}
+}
+
 int	ft_run(t_table *table, t_philo *philo)
 {
 	int	i;
@@ -79,15 +109,12 @@ int	ft_run(t_table *table, t_philo *philo)
 	}
 	i = -1;
 	while (++i < table->qty_philo)
-	{
 		if (pthread_create(&philo[i].thread, NULL, ft_loop, &philo[i]) != 0)
 			return (THREAD);
-	}
+	monitor_loop(table, philo);
 	i = -1;
 	while (++i < table->qty_philo)
-	{
 		if (pthread_join(philo[i].thread, NULL) != 0)
 			return (THREAD);
-	}
 	return (0);
 }

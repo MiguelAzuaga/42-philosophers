@@ -6,7 +6,7 @@
 /*   By: mqueiros <mqueiros@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/12 05:20:10 by mqueiros          #+#    #+#             */
-/*   Updated: 2025/08/14 15:40:07 by mqueiros         ###   ########.fr       */
+/*   Updated: 2025/08/19 17:27:20 by mqueiros         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,6 @@ int	main(int argc, char **argv)
 {
 	t_table			table;
 	t_philo			*philo;
-	char			*color;
 
 	table = (t_table){0};
 	philo = NULL;
@@ -48,12 +47,6 @@ int	main(int argc, char **argv)
 		return (1);
 	if (ft_error(ft_run(&table, philo), &table, philo))
 		return (1);
-	if (table.qty_eat > 0
-		&& table.total_eat != (table.qty_philo * table.qty_eat))
-		color = "\033[91m";
-	else
-		color = "\033[92m";
-	printf("\nTotal Meals:%s%d\033[0m\n", color, table.total_eat);
 	ft_error(-1, &table, philo);
 	return (0);
 }
