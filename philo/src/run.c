@@ -6,7 +6,7 @@
 /*   By: mqueiros <mqueiros@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/12 05:20:14 by mqueiros          #+#    #+#             */
-/*   Updated: 2025/08/19 17:57:32 by mqueiros         ###   ########.fr       */
+/*   Updated: 2025/08/20 15:58:01 by mqueiros         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,51 +15,43 @@
 void	write_action(t_philo *philo, char *action)
 {
 	long	timestamp;
+	int		end_sim;
 
-	pthread_mutex_lock(&philo->table->write);
+	pthread_mutex_lock(&philo->table->lock_state);
+	end_sim = philo->table->end_sim;
 	timestamp = ft_get_time() - philo->table->start_time;
-	if (!philo->table->end_sim)
+	pthread_mutex_unlock(&philo->table->lock_state);
+	pthread_mutex_lock(&philo->table->write);
+	if (!end_sim)
 		printf("%-5ld %3d %s", timestamp, philo->id, action);
 	pthread_mutex_unlock(&philo->table->write);
 }
 
-void	sleep_duration(t_philo *philo, long action)
+int	is_over(t_table *table)
 {
-	long cur;
+	int	res;
 
-	cur = ft_get_time();
-
-	pthread_mutex_lock(&philo->table->lock_state);
-	if (philo->last_eat + philo->table->time_die < cur + action && !philo->table->end_sim)
-	{
-		usleep(((philo->last_eat + philo->table->time_die) - cur) * 1000);
-		write_action(philo, DEAD);
-		philo->table->end_sim = 1;
-	}
-	else
-		usleep(action * 1000);
-	pthread_mutex_unlock(&philo->table->lock_state);
+	pthread_mutex_lock(&table->lock_state);
+	res = table->end_sim;
+	pthread_mutex_unlock(&table->lock_state);
+	return (res);
 }
+
 int	is_dead(t_philo *philo)
 {
 	int		dead;
 	long	cur;
+	long	last_eat;
+	long	time_die;
 
 	dead = 0;
 	cur = ft_get_time();
 	pthread_mutex_lock(&philo->table->lock_state);
-
-	if (cur - philo->last_eat >= philo->table->time_die
-		&& !philo->table->end_sim)
-	{
-		dead = 1;
-	}
-	if (dead)
-	{
-		write_action(philo, DEAD);
-		philo->table->end_sim = 1;
-	}
+	last_eat = philo->last_eat;
+	time_die = philo->table->time_die;
 	pthread_mutex_unlock(&philo->table->lock_state);
+	if (cur - last_eat > time_die)
+		dead = 1;
 	return (dead);
 }
 
@@ -68,30 +60,48 @@ void monitor_loop(t_table *table, t_philo *philo)
 	int	i;
 	int	count;
 
-	while (!table->end_sim)
+	while (!is_over(table))
 	{
-		count = 0;
 		i = 0;
-		while (i < table->qty_philo)
+		count = 0;
+		while (i < table->qty_philo && !is_over(table))
 		{
-			pthread_mutex_lock(&table->lock_state);
-			if (ft_get_time() - (philo[i].last_eat) > table->time_die)
+			if (is_dead(&philo[i]))
 			{
-				write_action(&philo[i], DEAD);
-				table->end_sim = 1;
+				pthread_mutex_lock(&table->lock_state);
+				if (!table->end_sim)
+				{
+					table->end_sim = 1;
+					pthread_mutex_unlock(&table->lock_state);
+					pthread_mutex_lock(&philo->table->write);
+					printf("%-5ld %3d %s", ft_get_time() - table->start_time, philo->id, DEAD);
+					pthread_mutex_unlock(&philo->table->write);
+				}
+				else
+					pthread_mutex_unlock(&table->lock_state);
+				return ;
 			}
-			if (philo[i].qty_eat > table->qty_eat)
+			pthread_mutex_lock(&table->lock_state);
+			if (table->qty_eat > 0 && philo[i].qty_eat >= table->qty_eat)
 			{
 				count++;
 				if (count == table->qty_philo)
+				{
 					table->end_sim = 1;
+					pthread_mutex_unlock(&table->lock_state);
+					pthread_mutex_lock(&philo->table->write);
+					printf("%-5ld %s", ft_get_time() - table->start_time, FINISH);
+					pthread_mutex_unlock(&philo->table->write);
+					return ;
+				}
 			}
 			pthread_mutex_unlock(&table->lock_state);
 			i++;
 		}
-		usleep(1000); // avoid busy loop
+		usleep(500);
 	}
 }
+
 
 int	ft_run(t_table *table, t_philo *philo)
 {
@@ -101,10 +111,7 @@ int	ft_run(t_table *table, t_philo *philo)
 	{
 		write_action(philo, FORK);
 		usleep(table->time_die * 1000);
-		pthread_mutex_lock(&philo->table->write);
-		printf("%-5ld %3d %s", ft_get_time() - philo->table->start_time,
-			philo->id, DEAD);
-		pthread_mutex_unlock(&philo->table->write);
+		write_action(philo, DEAD);
 		return (0);
 	}
 	i = -1;

@@ -116,23 +116,25 @@ valgrind:
 	@if [ -f "$(VAL_OUT)" ]; then \
 		rm -f $(VAL_OUT); \
 	fi
-	@echo "$(ESC)$(B)$(C_YELLOW)Running Valgrind tools with input $(VAL_RUN)$(ESC)$(RST)"
+	@echo "$(ESC)$(B)$(C_YELLOW)Running Valgrind tools with input$(ESC)$(RST) $(VAL_RUN)"
 	@echo	"=============================================" >> $(VAL_OUT)
 	@echo	" Running Basic Valgrind:" >> $(VAL_OUT)
 	@echo	"=============================================" >> $(VAL_OUT)
 	@valgrind --leak-check=full --show-leak-kinds=all $(VAL_RUN) 1>> /dev/null 2>> $(VAL_OUT)
-	@echo	"$(ESC)$(B)$(C_YELLOW)Finished basic Valgrind$(ESC)$(RST)"
+	@echo	"$(ESC)$(C_YELLOW)✔ Finished$(ESC)$(RST) Valgrind"
 	@echo	"=============================================" >> $(VAL_OUT)
 	@echo	" Running Helgrind Tool of Valgrind:" >> $(VAL_OUT)
 	@echo	"=============================================" >> $(VAL_OUT)
 	@valgrind --tool=helgrind $(VAL_RUN) 1>> /dev/null 2>> $(VAL_OUT)
-	@echo "$(ESC)$(B)$(C_YELLOW)Finished Helgrind$(ESC)$(RST)"
+	@echo "$(ESC)$(C_YELLOW)✔ Finished$(ESC)$(RST) Helgrind"
 	@echo	"=============================================" >> $(VAL_OUT)
 	@echo	" Running DRD Tool of Valgrind:" >> $(VAL_OUT)
 	@echo	"=============================================" >> $(VAL_OUT)
 	@valgrind --tool=drd $(VAL_RUN) 1>> /dev/null 2>> $(VAL_OUT)
-	@echo	"$(ESC)$(B)$(C_YELLOW)Finished DRD$(ESC)$(RST)"
-	@echo "${BLUE}Valgrind ran on project, output saved to $(VAL_OUT)$(ESC)$(RST)"
+	@echo	"$(ESC)$(C_YELLOW)✔ Finished$(ESC)$(RST) DRD"
+	@echo "$(ESC)$(C_GREEN)✔ Valgrind ran on project, output saved to $(VAL_OUT)$(ESC)$(RST)"
+#@cat $(VAL_OUT)
+
 # **************************************************************************** #
 #                                     Bonus                                    #
 # **************************************************************************** #
