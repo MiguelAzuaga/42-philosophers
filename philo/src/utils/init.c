@@ -6,7 +6,7 @@
 /*   By: mqueiros <mqueiros@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/12 05:20:00 by mqueiros          #+#    #+#             */
-/*   Updated: 2025/08/15 15:56:35 by mqueiros         ###   ########.fr       */
+/*   Updated: 2025/08/21 11:31:26 by mqueiros         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ int	init_forks(t_table *table)
 	{
 		if (pthread_mutex_init(&table->forks[i], NULL) != 0)
 		{
-			free_forks(table, i);
+			ft_free_forks(table, i);
 			return (MUTEX);
 		}
 		i++;
@@ -61,6 +61,8 @@ int	init_args(char **argv, t_table *table)
 	table->time_sleep = ft_atoi(argv[4]);
 	table->qty_eat = -1;
 	table->start_time = ft_get_time();
+	table->end_sim = 0;
+	table->forks = NULL;
 	if (table->qty_philo <= 0 || table->time_die <= 0
 		|| table->time_eat <= 0 || table->time_sleep <= 0)
 		return (INVALID_ARGS);

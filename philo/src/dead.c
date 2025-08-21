@@ -6,7 +6,7 @@
 /*   By: mqueiros <mqueiros@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/12 05:20:03 by mqueiros          #+#    #+#             */
-/*   Updated: 2025/08/15 14:47:05 by mqueiros         ###   ########.fr       */
+/*   Updated: 2025/08/21 06:52:21 by mqueiros         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ to_eat> <time_to_sleep> [number_of_times_each_philosopher_must_eat]\n", 127);
 	return ;
 }
 
-void	free_forks(t_table *table, int count)
+void	ft_free_forks(t_table *table, int count)
 {
 	int	i;
 
@@ -55,7 +55,7 @@ int	ft_error(int err, t_table *table, t_philo *philo)
 				pthread_mutex_destroy(&table->lock_state);
 			}
 			if (table && table->forks)
-				free_forks(table, table->qty_philo);
+				ft_free_forks(table, table->qty_philo);
 		}
 		if (philo)
 			free(philo);

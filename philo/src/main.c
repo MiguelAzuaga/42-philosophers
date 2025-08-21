@@ -6,13 +6,13 @@
 /*   By: mqueiros <mqueiros@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/12 05:20:10 by mqueiros          #+#    #+#             */
-/*   Updated: 2025/08/19 17:27:20 by mqueiros         ###   ########.fr       */
+/*   Updated: 2025/08/21 13:32:55 by mqueiros         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-int	parse_args(int argc, char **argv)
+static int	parse_args(int argc, char **argv)
 {
 	int	i;
 	int	j;
@@ -39,7 +39,6 @@ int	main(int argc, char **argv)
 	t_table			table;
 	t_philo			*philo;
 
-	table = (t_table){0};
 	philo = NULL;
 	if (ft_error(parse_args(argc, argv), NULL, NULL))
 		return (1);
