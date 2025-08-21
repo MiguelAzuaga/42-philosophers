@@ -6,7 +6,7 @@
 /*   By: mqueiros <mqueiros@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/12 05:20:14 by mqueiros          #+#    #+#             */
-/*   Updated: 2025/08/20 15:58:01 by mqueiros         ###   ########.fr       */
+/*   Updated: 2025/08/21 06:01:32 by mqueiros         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,7 +74,7 @@ void monitor_loop(t_table *table, t_philo *philo)
 					table->end_sim = 1;
 					pthread_mutex_unlock(&table->lock_state);
 					pthread_mutex_lock(&philo->table->write);
-					printf("%-5ld %3d %s", ft_get_time() - table->start_time, philo->id, DEAD);
+					printf("%-5ld %3d %s", ft_get_time() - table->start_time, philo[i].id, DEAD);
 					pthread_mutex_unlock(&philo->table->write);
 				}
 				else
