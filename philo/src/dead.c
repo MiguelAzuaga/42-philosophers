@@ -6,13 +6,13 @@
 /*   By: mqueiros <mqueiros@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/12 05:20:03 by mqueiros          #+#    #+#             */
-/*   Updated: 2025/08/21 06:52:21 by mqueiros         ###   ########.fr       */
+/*   Updated: 2025/08/21 13:35:13 by mqueiros         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-void	erro_msg(int error)
+static void	erro_msg(int error)
 {
 	if (error == MALLOC)
 		write(2, "Malloc error\n", 13);
