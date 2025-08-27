@@ -6,7 +6,7 @@
 /*   By: mqueiros <mqueiros@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/12 05:20:14 by mqueiros          #+#    #+#             */
-/*   Updated: 2025/08/21 11:10:39 by mqueiros         ###   ########.fr       */
+/*   Updated: 2025/08/27 17:47:44 by mqueiros         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,13 @@ void	ft_write_action(t_philo *philo, char *action)
 	pthread_mutex_unlock(&philo->table->lock_state);
 	pthread_mutex_lock(&philo->table->write);
 	if (!end_sim)
-		printf("%-5ld %3d %s", timestamp, philo->id, action);
+	{
+		ft_putnbr(timestamp);
+		write(1, " ", 1);
+		ft_putnbr(philo->id);
+		write(1, " ", 1);
+		ft_putstr(action);
+	}
 	pthread_mutex_unlock(&philo->table->write);
 }
 

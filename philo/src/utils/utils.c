@@ -6,7 +6,7 @@
 /*   By: mqueiros <mqueiros@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/12 05:19:54 by mqueiros          #+#    #+#             */
-/*   Updated: 2025/08/21 11:32:53 by mqueiros         ###   ########.fr       */
+/*   Updated: 2025/08/27 17:46:23 by mqueiros         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,4 +48,22 @@ int	ft_atoi(const char *str)
 		i++;
 	}
 	return (sign * ans);
+}
+
+static void	putchr(char c)
+{
+	write(1, &c, 1);
+}
+
+void	ft_putstr(const char *s)
+{
+	while (*s)
+		write(1, s++, 1);
+}
+
+void	ft_putnbr(long n)
+{
+	if (n >= 10)
+		ft_putnbr(n / 10);
+	putchr((n % 10) + '0');
 }

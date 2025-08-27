@@ -6,7 +6,7 @@
 /*   By: mqueiros <mqueiros@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/12 05:20:22 by mqueiros          #+#    #+#             */
-/*   Updated: 2025/08/21 11:30:24 by mqueiros         ###   ########.fr       */
+/*   Updated: 2025/08/27 17:45:12 by mqueiros         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,6 +64,8 @@ int		ft_is_over(t_table *table);
 int		ft_init(char **argv, t_table *table, t_philo **philo);
 int		ft_atoi(const char *str);
 long	ft_get_time(void);
+void	ft_putnbr(long n);
+void	ft_putstr(const char *s);
 
 int		ft_run(t_table *table, t_philo *philo);
 void	*ft_loop(void *_philo);
