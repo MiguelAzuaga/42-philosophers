@@ -6,7 +6,7 @@
 /*   By: mqueiros <mqueiros@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/12 05:20:14 by mqueiros          #+#    #+#             */
-/*   Updated: 2025/08/27 17:47:44 by mqueiros         ###   ########.fr       */
+/*   Updated: 2025/08/28 14:51:42 by mqueiros         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,22 +15,20 @@
 void	ft_write_action(t_philo *philo, char *action)
 {
 	long	timestamp;
-	int		end_sim;
 
 	pthread_mutex_lock(&philo->table->lock_state);
-	end_sim = philo->table->end_sim;
-	timestamp = ft_get_time() - philo->table->start_time;
-	pthread_mutex_unlock(&philo->table->lock_state);
-	pthread_mutex_lock(&philo->table->write);
-	if (!end_sim)
+	if (!philo->table->end_sim)
 	{
+		timestamp = ft_get_time() - philo->table->start_time;
+		pthread_mutex_lock(&philo->table->write);
 		ft_putnbr(timestamp);
 		write(1, " ", 1);
 		ft_putnbr(philo->id);
 		write(1, " ", 1);
 		ft_putstr(action);
+		pthread_mutex_unlock(&philo->table->write);
 	}
-	pthread_mutex_unlock(&philo->table->write);
+	pthread_mutex_unlock(&philo->table->lock_state);
 }
 
 int	ft_is_over(t_table *table)
@@ -90,7 +88,7 @@ static void	monitor_loop(t_table *table, t_philo *philo)
 				return ;
 			i++;
 		}
-		usleep(500);
+		usleep(10);
 	}
 }
 

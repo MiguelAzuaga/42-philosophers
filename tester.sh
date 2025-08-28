@@ -41,7 +41,7 @@ SLEEP=$5
 MEALS=$6
 OUTFILE="philo_test.log"
 
-# Run binary
+# Run binary in the background
 echo -e "${ESC}${B}${C_YELLOW}Running:${ESC}${RST} $BIN $N $DIE $EAT $SLEEP $MEALS"
 if [ -n "MEALS" ]; then
 	$BIN $N $DIE $EAT $SLEEP $MEALS > $OUTFILE 2>&1 &
@@ -94,7 +94,7 @@ for ((i=1; i<=N; i++)); do
 done
 
 # Check if someone died
-if grep -q "die" $OUTFILE; then
+if (grep -q "die" $OUTFILE) || (grep -q "die" $OUTFILE); then
 	echo -e "${ESC}${C_RED}✖${ESC}${RST} A philosopher died!"
 else
 	echo -e "${ESC}${C_GREEN}✔${ESC}${RST} No philosopher died"
@@ -102,37 +102,51 @@ fi
 
 # Check if philo should have died and didn't
 echo -e "${ESC}${C_BLUE}------------------------------------------------------------${ESC}${RST}"
-echo -e "${ESC}${C_MAGENTA}▶ Timing Check (no gaps > $DIE ms)${ESC}${RST}"
+echo -e "${ESC}${C_MAGENTA}▶ Timing Check${ESC}${RST}"
 echo -e "${ESC}${C_BLUE}------------------------------------------------------------${ESC}${RST}"
 
-awk -v die="$DIE" '
+LAST_LINE=$(tail -n 1 "$OUTFILE")
+if echo "$LAST_LINE" | grep -Eq "eat|die|dead"; then
+	echo -e "${ESC}${C_GREEN}✔${ESC}${RST} Last event is valid"
+else
+	echo -e "${ESC}${C_RED}✖${ESC}${RST} Last event was: $LAST_LINE (expected philosopher to eat or die)"
+fi
+
+awk -v eat="$EAT" -v sleep="$SLEEP" -v die="$DIE" '
 {
-	time=$1; id=$2; max_time=0
-	if (last_time[id] == "")
+	time=$1; id=$2; line=$0
+
+	action = ""
+	if (line ~ /eat/)			action = "eat"
+	else if (line ~ /sleep/)	action = "sleep"
+	else if (line ~ /think/)	action = "think"
+	else if (line ~ /die|dead/)	action = "die"
+
+	if (last_time[id] == "" || last_action[id] == "")
 	{
-		last_time[id] = 0
+		last_time[id] = time
+		last_action[id] = action
+		next
 	}
-	if ((time - last_time[id]) > die)
+	duration = time - last_time[id]
+
+	if (last_action[id] == "eat" && duration < eat)
 	{
-		printf "\033[91m✖\033[0m Philosopher %d had a gap of %d ms (> %d)\n", id, time - last_time[id], die
+		printf "\033[91m✖\033[0m Philosopher %d did not eat long enough (%d < %d)\n", id, duration, eat
 		bad=1
 	}
-	last_time[id]=time
-	max_time = time > max_time ? time : max_time
-}
-END
-{
-	for (id in last_time)
+	if (last_action[id] == "sleep" && duration < sleep)
 	{
-		if ((max_time - last_time[id]) > die)
-		{
-			printf "\033[91m✖\033[0m Philosopher %d had a gap of %d ms (> %d)\n", id, max_time - last_time[id], die
-			bad=1
-		}
+		printf "\033[91m✖\033[0m Philosopher %d did not sleep long enough (%d < %d)\n", id, duration, sleep
+		bad=1
 	}
+	last_time[id] = time
+	last_action[id] = action
+}
+END {
 	if (!bad)
 	{
-		printf "\033[92m✔\033[0m All philosophers respected the die time\n"
+		printf "\033[92m✔\033[0m All actions respected their timing\n"
 	}
 }
 ' "$OUTFILE"

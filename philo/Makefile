@@ -3,7 +3,6 @@
 # **************************************************************************** #
 
 NAME		= philo
-BONUS		= philo_bonus
 
 # **************************************************************************** #
 #                             Compiler & Commands                              #
@@ -15,7 +14,6 @@ RM			= rm -rf
 MAKE		= make --no-print-directory
 VAL_RUN		= ./philo 5 800 200 200 7
 LOGO_BUILT	= 0
-BONUS_BUILT	= 0
 
 # **************************************************************************** #
 #                                 Output Formatting                            #
@@ -94,18 +92,13 @@ clean:
 	fi
 
 fclean: clean
-	@if [ -f "$(NAME)" ] || [ -f "$(BONUS)" ]; then \
+	@if [ -f "$(NAME)" ]; then \
 		$(RM) "$(NAME)"; \
-		$(RM) "$(BONUS)"; \
 		printf "\n$(ESC)$(B)$(C_RED)✔ Removed binaries$(ESC)$(RST)\n\n"; \
 	fi
 	@$(RM) "$(VAL_OUT)";
 
 re: fclean
-	@if [ -f $(BONUS) ]; then \
-		printf "$(ESC)$(B)$(C_YELLOW)✔ Rebuilding Bonus$(ESC)$(RST)\n"; \
-		$(MAKE) bonus; \
-	fi
 	@printf "$(ESC)$(B)$(C_YELLOW)✔ Rebuilding regular build$(ESC)$(RST)\n"
 	@$(MAKE) all
 
@@ -136,22 +129,6 @@ valgrind:
 #@cat $(VAL_OUT)
 
 # **************************************************************************** #
-#                                     Bonus                                    #
-# **************************************************************************** #
-
-#bonus: $(BONUS)
-#	@if [ "$(LOGO_BUILT)" = "1" ]; then \
-		$(MAKE) logo; \
-	else \
-		echo "$(ESC)$(B)$(C_YELLOW)✔ Everything is up to date$(ESC)$(RST)"; \
-	fi
-
-#$(BONUS): $(BONUS_OBJS)
-#	@$(CC) $(CFLAGS) -o $@
-#	@$(eval LOGO_BUILT := 1)
-#	@printf "$(ESC)$(B)$(C_GREEN)✔ Created binary: $(ESC)$(RST)$@\n"
-
-# **************************************************************************** #
 #                                     Logo                                     #
 # **************************************************************************** #
 
@@ -169,4 +146,4 @@ logo:
 #                                   Phony Targets                              #
 # **************************************************************************** #
 
-.PHONY: all clean fclean re download logo
+.PHONY: all clean fclean re logo

@@ -6,7 +6,7 @@
 /*   By: mqueiros <mqueiros@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/12 05:20:07 by mqueiros          #+#    #+#             */
-/*   Updated: 2025/08/21 08:48:59 by mqueiros         ###   ########.fr       */
+/*   Updated: 2025/08/28 14:56:16 by mqueiros         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,15 +35,13 @@ static void	eats(t_philo *philo)
 	take_forks(philo);
 	pthread_mutex_lock(&philo->table->lock_state);
 	philo->last_eat = ft_get_time();
+	if (philo->table->qty_eat > 0)
+		philo->qty_eat++;
 	pthread_mutex_unlock(&philo->table->lock_state);
 	ft_write_action(philo, EAT);
 	usleep(philo->table->time_eat * 1000);
 	pthread_mutex_unlock(philo->l_fork);
 	pthread_mutex_unlock(philo->r_fork);
-	pthread_mutex_lock(&philo->table->lock_state);
-	if (philo->table->qty_eat > 0)
-		philo->qty_eat++;
-	pthread_mutex_unlock(&philo->table->lock_state);
 }
 
 void	*ft_loop(void *_philo)
@@ -60,6 +58,8 @@ void	*ft_loop(void *_philo)
 			break ;
 		ft_write_action(philo, SLEEP);
 		usleep(philo->table->time_sleep * 1000);
+		if (ft_is_over(philo->table))
+			break ;
 		ft_write_action(philo, THINK);
 		if (philo->table->qty_philo % 2 && philo->id % 2)
 			usleep(1000);
