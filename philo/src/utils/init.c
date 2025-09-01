@@ -6,13 +6,13 @@
 /*   By: mqueiros <mqueiros@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/12 05:20:00 by mqueiros          #+#    #+#             */
-/*   Updated: 2025/08/21 11:31:26 by mqueiros         ###   ########.fr       */
+/*   Updated: 2025/09/01 11:39:41 by mqueiros         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-int	init_philo(t_table *table, t_philo **philo)
+static int	init_philo(t_table *table, t_philo **philo)
 {
 	int	i;
 
@@ -33,7 +33,7 @@ int	init_philo(t_table *table, t_philo **philo)
 	return (0);
 }
 
-int	init_forks(t_table *table)
+static int	init_forks(t_table *table)
 {
 	int	i;
 
@@ -53,7 +53,7 @@ int	init_forks(t_table *table)
 	return (0);
 }
 
-int	init_args(char **argv, t_table *table)
+static int	init_args(char **argv, t_table *table)
 {
 	table->qty_philo = ft_atoi(argv[1]);
 	table->time_die = ft_atoi(argv[2]);

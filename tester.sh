@@ -4,13 +4,14 @@
 #	./test_philo.sh <philo_binary> <nbr> <die> <eat> <sleep> [meals]
 
 # Flags
-TIMEOUT=5
 SILENT=0
+TIMEOUT=5
+TIMEOUT_SET=0
 
 while getopts "t:n" flag; do
 	case $flag in
 		n) SILENT=1 ;;
-		t) TIMEOUT=$OPTARG ;;
+		t) TIMEOUT=$OPTARG; TIMEOUT_SET=1 ;;
 		*) echo "Usage: $0 [-t seconds] [-n] <philo_binary> <nbr> <die> <eat> <sleep> [meals]"; exit 1 ;;
 	esac
 done
@@ -39,23 +40,57 @@ DIE=$3
 EAT=$4
 SLEEP=$5
 MEALS=$6
+VALID=1
 OUTFILE="philo_test.log"
 
+# Ensure numeric values
+echo -e "${ESC}${C_BLUE}------------------------------------------------------------${ESC}${RST}"
+echo -e "${ESC}${C_MAGENTA}▶ Argument Validation${ESC}${RST}"
+echo -e "${ESC}${C_BLUE}------------------------------------------------------------${ESC}${RST}"
+
+for varname in N DIE EAT SLEEP MEALS; do
+	val="${!varname}"
+	# Skip empty MEALS (optional argument)
+	if [ "$varname" = "MEALS" ] && [ -z "$val" ]; then
+		continue
+	fi
+	if ! [[ "$val" =~ ^[0-9]+$ ]]; then
+		echo -e "${ESC}${C_RED}✖${ESC}${RST} Error: $varname must be a positive integer (got '$val')" >&2
+		VALID=0
+	else
+		echo -e "${ESC}${C_GREEN}✔${ESC}${RST} $varname	= $val"
+	fi
+done
+if [ $VALID -eq 1 ]; then
+	echo -e "${ESC}${C_GREEN}✔${ESC}${RST} All required arguments are valid"
+else
+	echo -e "${ESC}${C_RED}✖${ESC}${RST} Some arguments are invalid"
+fi
+
 # Run binary in the background
-echo -e "${ESC}${B}${C_YELLOW}Running:${ESC}${RST} $BIN $N $DIE $EAT $SLEEP $MEALS"
-if [ -n "MEALS" ]; then
+echo -e "${ESC}${B}${C_YELLOW}Running:${ESC}${RST} $BIN $N $DIE $EAT $SLEEP ${MEALS:-}"
+if [ -n "$MEALS" ]; then
 	$BIN $N $DIE $EAT $SLEEP $MEALS > $OUTFILE 2>&1 &
 else
 	$BIN $N $DIE $EAT $SLEEP > $OUTFILE 2>&1 &
 fi
 PID=$!
 
+# Check for program errors
+if grep -qiE "error|Invalid|usage" "$OUTFILE"; then
+	echo -ne "${ESC}${C_RED}✖${ESC}${RST} Program reported an error: "
+	grep -iE "error|Invalid|usage" "$OUTFILE"
+	echo -e "${ESC}${C_RED}✖${ESC}${RST} Skipping further checks because program did not run correctly."
+	rm -f "$OUTFILE"
+	exit 1
+fi
+
 # Enforce TIMEOUT if no MEALS specified OR if -t flag was used
-if [ -n "$TIMEOUT" ] && [ "$TIMEOUT" -gt 0 ]; then
+if { [ -z "$MEALS" ] && [ "$TIMEOUT" -gt 0 ]; } || { [ -n "$MEALS" ] && [ "$TIMEOUT_SET" -eq 1 ]; }; then
 	(
 		sleep "$TIMEOUT"
 		if kill -0 $PID 2>/dev/null; then
-			[ "$SILENT" -eq 0 ] && echo -e "${ESC}${B}${C_YELLOW}Stopping program after${ESC}${RST} $TIMEOUT seconds..."
+			echo -e "${ESC}${B}${C_YELLOW}Stopping program after${ESC}${RST} $TIMEOUT seconds..."
 			kill $PID
 			sleep 0.1
 			kill -0 $PID 2>/dev/null && kill -9 $PID
@@ -68,7 +103,7 @@ fi
 wait $PID
 [ -n "$WATCHDOG" ] && kill $WATCHDOG 2>/dev/null
 
-
+# Output program log
 if [ "$SILENT" == 0 ]; then
 	echo -e "${ESC}${C_BLUE}------------------------------------------------------------${ESC}${RST}"
 	echo -e "${ESC}${C_MAGENTA}▶ Program Output${ESC}${RST}"
@@ -94,13 +129,13 @@ for ((i=1; i<=N; i++)); do
 done
 
 # Check if someone died
-if (grep -q "die" $OUTFILE) || (grep -q "die" $OUTFILE); then
+if grep -qiE "die|dead" $OUTFILE; then
 	echo -e "${ESC}${C_RED}✖${ESC}${RST} A philosopher died!"
 else
 	echo -e "${ESC}${C_GREEN}✔${ESC}${RST} No philosopher died"
 fi
 
-# Check if philo should have died and didn't
+# Timing check
 echo -e "${ESC}${C_BLUE}------------------------------------------------------------${ESC}${RST}"
 echo -e "${ESC}${C_MAGENTA}▶ Timing Check${ESC}${RST}"
 echo -e "${ESC}${C_BLUE}------------------------------------------------------------${ESC}${RST}"
