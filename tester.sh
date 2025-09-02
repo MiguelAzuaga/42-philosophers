@@ -2,7 +2,7 @@
 
 # Usage:
 #	./test_philo.sh <philo_binary> <nbr> <die> <eat> <sleep> [meals]
-
+#Below is the test code
 # Flags
 SILENT=0
 TIMEOUT=5
