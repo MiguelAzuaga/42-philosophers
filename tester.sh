@@ -147,7 +147,7 @@ else
 	echo -e "${ESC}${C_RED}✖${ESC}${RST} Last event was: $LAST_LINE (expected philosopher to eat or die)"
 fi
 
-awk -v eat="$EAT" -v sleep="$SLEEP" -v die="$DIE" '
+awk -v eat="$EAT" -v sleep="$SLEEP" -v die="$DIE" -v last_action=$LAST_LINE'
 {
 	time=$1; id=$2; line=$0
 
@@ -157,28 +157,58 @@ awk -v eat="$EAT" -v sleep="$SLEEP" -v die="$DIE" '
 	else if (line ~ /think/)	action = "think"
 	else if (line ~ /die|dead/)	action = "die"
 
-	if (last_time[id] == "" || last_action[id] == "")
+    # initialize philosopher state
+    if (!(id in last_time))
 	{
-		last_time[id] = time
-		last_action[id] = action
-		next
-	}
+        last_time[id] = time
+        last_eat[id] = time
+        last_action[id] = action
+        next
+    }
+
+	# starvation check BEFORE updating
+    if (time - last_eat[id] > die && action != "die")
+	{
+        printf "\033[91m✖\033[0m Philosopher %d should have died before %s at %d (last ate %d, die=%d)\n",
+			id, action, time, last_eat[id], die
+        bad=1
+    }
+
 	duration = time - last_time[id]
 
 	if (last_action[id] == "eat" && duration < eat)
 	{
-		printf "\033[91m✖\033[0m Philosopher %d did not eat long enough (%d < %d)\n", id, duration, eat
+		printf "\033[91m✖\033[0m Philosopher %d did not eat long enough (%d < %d)\n"
+			, id, duration, eat
 		bad=1
 	}
 	if (last_action[id] == "sleep" && duration < sleep)
 	{
-		printf "\033[91m✖\033[0m Philosopher %d did not sleep long enough (%d < %d)\n", id, duration, sleep
+		printf "\033[91m✖\033[0m Philosopher %d did not sleep long enough (%d < %d)\n",
+			id, duration, sleep
 		bad=1
 	}
-	last_time[id] = time
-	last_action[id] = action
+
+	# update tracking
+    last_time[id] = time
+    last_action[id] = action
+    if (action == "eat")
+	{
+        last_eat[id] = time
+    }
 }
 END {
+    split(last_line, parts, " ")
+    end_time = parts[1]
+
+    for (id in last_eat)
+	{
+        if (end_time - last_eat[id] > die && last_action[id] != "die") {
+            printf "\033[91m✖\033[0m Philosopher %d should have died by the end (last ate %d, end %d, die=%d)\n",
+			id, last_eat[id], end_time, die
+            bad=1
+        }
+    }
 	if (!bad)
 	{
 		printf "\033[92m✔\033[0m All actions respected their timing\n"
