@@ -1,0 +1,7 @@
+#Name 					N	DIE	EAT	SLEEP	MEALS	EXPECT_DIE
+single_die				1	800	200	200		-		1
+no_death				5	800	200	200		-		0
+with_meals				5	800	200	200		7		0
+tight_timming			4	410	200	200		-		0
+sleep_meals_tight_die	4	310	200	100		-		1
+small_stress			2	410	200	200		50		0
